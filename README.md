@@ -51,22 +51,22 @@ python setup.py install</code></pre>
   <h3 style="color: #0d47a1;" align="center">`login(username: str, password: str)`</h3>
   <p>Login to the TIU website.</p>
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">await tiu.login(username='your_username', password='your_password')</code></pre>
+  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.login(username='your_username', password='your_password')</code></pre>
 
   <h3 style="color: #0d47a1;" align="center">`sid_login(SID: str)`</h3>
   <p>Login using a session ID (SID).</p>
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">await tiu.sid_login(SID='your_session_id')</code></pre>
+  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.sid_login(SID='your_session_id')</code></pre>
 
   <h3 style="color: #0d47a1;" align="center">`logout()`</h3>
   <p>Log out from the TIU website.</p>
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">await tiu.logout()</code></pre>
+  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.logout()</code></pre>
 
   <h3 style="color: #0d47a1;" align="center">`get_courses_data()`</h3>
   <p>Fetch course data from the TIU website.</p>
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">courses_data = await tiu.get_courses_data()</code></pre>
+  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">courses_data = tiu.get_courses_data()</code></pre>
 </div>
 
 <div align="center">
