@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 with open("README.md", "r", encoding="utf-8") as f:
   long_description = f.read()
 
-VERSION = "0.0.10"
+VERSION = "0.0.11"
 DESCRIPTION = "A web scraper for TIU student system"
 
 setup(
