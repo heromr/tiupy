@@ -1,80 +1,185 @@
-<div align="center">
-  <h1 style="color: #0d47a1; font-size: 3em;">tiupy</h1>
+# TIUPY Library
 
-  <p>
-    <a href="https://github.com/heromr/tiupy/commits/main"><img src="https://img.shields.io/github/last-commit/heromr/tiupy?label=last%20updated&color=blueviolet" alt="GitHub last commit"></a>
-    <a href="https://pypi.org/project/tiupy/"><img src="https://img.shields.io/pypi/dw/tiupy?color=blueviolet" alt="PyPI - Downloads"></a>
-  </p>
+A Python library for interacting with Tishk International University's student portal. It provides features such as user authentication, profile information retrieval, and course data extraction.
 
-  <p style="font-size: 1.2em; color: #424242;">A Python module for interacting with the TIU (Tishk International University) website, offering features like login, profile information retrieval, and course data access.</p>
+---
 
-  <h2 style="color: #0d47a1; font-size: 2em;">Installation</h2>
+## **Features**
+- Login using username and password or an existing session SID.
+- Retrieve user profile information.
+- Fetch and parse course data.
 
-  <p style="font-size: 1.2em; color: #424242;">You can install tiupy using pip:</p>
+---
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">pip install tiupy</code></pre>
+## **Installation**
+To use this library, clone or download the repository. Or install the required using `pip`:
 
-  <p style="font-size: 1.2em; color: #424242;">Alternatively, clone the repository and install it manually:</p>
+```bash
+pip install tiupy
+```
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">git clone https://github.com/heromr/tiupy.git
-cd tiupy
-python setup.py install</code></pre>
-</div>
+---
 
-<div>
-  <h2 align="center">Getting Started</h2>
+## **Usage Examples**
 
-  <p>
-    To get started with the Tiu Python Module, follow these steps:
-  </p>
+### **1. Login and Fetch Profile Information**
 
-  <h3 align="center">1. Import the module</h3>
+```python
+from tiupy import Tiu
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">from tiupy import Tiu</code></pre>
+# Initialize the client
+tiu_client = Tiu()
 
-  <h3 align="center">2. Create an instance of Tiu</h3>
+try:
+    # Login with username and password
+    tiu_client.login("your_username", "your_password")
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu = Tiu()</code></pre>
+    # Get profile information
+    profile = tiu_client.profile
+    print(f"Student Name: {profile.name}")
+    print(f"GPA: {profile.gpa}")
 
-  <p>
-    You can customize the initialization by providing optional parameters like proxies and request timeout.
-  </p>
-</div>
+finally:
+    # Logout from the session
+    tiu_client.logout()
+```
 
-<div>
-  <h2 align="center">Methods</h2>
+---
 
-  <p>
-    The Tiu module provides the following methods for interaction:
-  </p>
+### **2. Login with Session SID**
 
-  <h3 style="color: #0d47a1;" align="center">`login(username: str, password: str)`</h3>
-  <p>Login to the TIU website.</p>
+```python
+from tiupy import Tiu
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.login(username='your_username', password='your_password')</code></pre>
+tiu_client = Tiu()
 
-  <h3 style="color: #0d47a1;" align="center">`sid_login(SID: str)`</h3>
-  <p>Login using a session ID (SID).</p>
+try:
+    # Login with an existing SID
+    tiu_client.sid_login("your_existing_sid")
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.sid_login(SID='your_session_id')</code></pre>
+    # Get profile information
+    print("Logged in with SID successfully.")
+finally:
+    tiu_client.logout()
+```
 
-  <h3 style="color: #0d47a1;" align="center">`logout()`</h3>
-  <p>Log out from the TIU website.</p>
+---
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">tiu.logout()</code></pre>
+### **3. Fetch Course Data**
 
-  <h3 style="color: #0d47a1;" align="center">`get_courses_data()`</h3>
-  <p>Fetch course data from the TIU website.</p>
+```python
+from tiupy import Tiu
 
-  <pre style="background-color: #f5f5f5; padding: 10px;"><code style="color: #f44336;">courses_data = tiu.get_courses_data()</code></pre>
-</div>
+tiu_client = Tiu()
 
-<div align="center">
-  <h2>License</h2>
+try:
+    # Login first
+    tiu_client.login("your_username", "your_password")
 
-  <p>
-    This module is open-source and available under the MIT License. See the <a href="https://github.com/heromr/tiupy/blob/main/LICENSE">LICENSE</a> file for more details.
-  </p>
-</div>
-</body>
-</html>
+    # Get course data
+    courses = tiu_client.get_courses_data()
+
+    # Print as JSON
+    print("Courses JSON:\n", courses.to_json())
+finally:
+    tiu_client.logout()
+```
+
+---
+
+### **4. Profile Data Attributes**
+After login, access the `profile` object for user information:
+
+```python
+profile = tiu_client.profile
+print("Name:", profile.name)
+print("Email:", profile.email)
+print("Department:", profile.department)
+print("Mobile:", profile.mobile)
+```
+
+---
+
+### **5. Course Data Attributes**
+Access the list of courses using the `courses` object:
+
+```python
+for course in courses.courses:
+    print(f"{course.course_code} - {course.course_name}: {course.grade}")
+```
+
+---
+
+## **Error Handling**
+The library raises exceptions when requests fail. Always handle potential errors:
+
+```python
+from tiupy import Tiu
+
+try:
+    tiu_client = Tiu()
+    tiu_client.login("wrong_user", "wrong_password")
+except Exception as e:
+    print(f"An error occurred: {e}")
+```
+
+---
+
+## **Example Scripts**
+
+### **1. Login Example (`example_login.py`)**
+
+```python
+from tiupy import Tiu
+
+def main():
+    tiu_client = Tiu()
+    
+    try:
+        tiu_client.login("your_username", "your_password")
+        profile = tiu_client.profile
+        print("Login successful.")
+        print("Student Name:", profile.name)
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        tiu_client.logout()
+
+if __name__ == "__main__":
+    main()
+```
+
+### **2. Fetch Course Data Example (`example_courses.py`)**
+
+```python
+from tiupy import Tiu
+
+def main():
+    tiu_client = Tiu()
+
+    try:
+        tiu_client.login("your_username", "your_password")
+        courses = tiu_client.get_courses_data()
+        
+        print("Courses Data:")
+        for course in courses.courses:
+            print(f"{course.course_code} - {course.course_name}: {course.grade}")
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        tiu_client.logout()
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## **Contributing**
+Pull requests are welcome. For significant changes, please open an issue first to discuss your ideas.
+
+---
+
+## **License**
+This project is licensed under the MIT License.
+
