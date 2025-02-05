@@ -1,53 +1,64 @@
-from httpx import Client
+from httpx import Client, HTTPStatusError
 from typing import Optional, Any, Dict
-from .utils import headers, objects
+from .utils import header, objects
 
 
 class Tiu:
     def __init__(self, proxies: Optional[dict] = None, request_timeout: Optional[int] = 60):
         self.base_url = "https://my.tiu.edu.iq"
         self.proxies = proxies
-
         self.sid = None
         self.request_timeout = request_timeout
-        self.profile = objects.UserProfile(None)
+        self.profile = objects.UserProfile()
 
     def make_request(self, method: str, endpoint: str, data: Optional[Dict[str, Any]] = None, params: Optional[Dict[str, Any]] = None):
-        url = self.base_url + endpoint
+        """Handle HTTP requests and error management."""
+        url = f"{self.base_url}{endpoint}"
+        request_headers = header.Headers(self.sid).get_headers()
+
         with Client(proxies=self.proxies, timeout=self.request_timeout) as client:
-            response = client.request(method, url, headers=headers.Headers().headers, data=data, params=params)
-            response.raise_for_status()
-            return response
-    
-    def _get_profile_info(self):
+            try:
+                response = client.request(method, url, headers=request_headers, data=data, params=params)
+                response.raise_for_status()
+                return response
+            except HTTPStatusError as e:
+                raise Exception(f"Request failed: {e}")
+
+    def _get_profile_info(self) -> str:
         response = self.make_request("GET", endpoint="/pages/home.php")
         return response.text
-    
-    def login(self, username: str, password: str):
+
+    def login(self, username: str, password: str) -> str:
+        """Login using username and password"""
         data = {
             'username': username,
             'password': password,
-            'login.x': '0',  # Need to change?
-            'login.y': '0'   # Need to change?
+            'login.x': '0',
+            'login.y': '0'
         }
 
         response = self.make_request("POST", endpoint="/", data=data)
-
         self.sid = response.cookies.get("PHPSESSID")
-        headers.sid = self.sid
-        self.profile = objects.UserProfile(self._get_profile_info())
-        return response.status_code
-    
-    def sid_login(self, SID: str):
-        self.sid = SID
-        headers.sid = self.sid
-        self.profile = objects.UserProfile(self._get_profile_info())
-        return
-    
-    def logout(self):
-        response = self.make_request("GET", endpoint="/pages/p999.php/")
-        return response.status_code
-    
-    def get_courses_data(self):
+        self.profile = objects.UserProfile()
+        self.profile.from_html(self._get_profile_info())
+        return "Login successful."
+
+    def sid_login(self, sid: str) -> str:
+        """Login using an existing session SID"""
+        self.sid = sid
+        self.profile = objects.UserProfile()
+        self.profile.from_html(self._get_profile_info())
+        return "SID Login successful."
+
+    def logout(self) -> str:
+        """Logout and clear the session"""
+        self.make_request("GET", endpoint="/pages/p999.php/")
+        self.sid = None
+        return "Logout successful."
+
+    def get_courses_data(self) -> objects.CourseData:
+        """Fetch and return course data"""
         response = self.make_request("GET", endpoint="/pages/p103.php")
-        return objects.CourseData(response.text)
+        course_data = objects.CourseData()
+        course_data.from_html(response.text)
+        return course_data
