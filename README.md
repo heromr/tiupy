@@ -1,4 +1,4 @@
-# TIUPY Library
+# TIUPY 
 
 A Python library for interacting with Tishk International University's student portal. It provides features such as user authentication, profile information retrieval, and course data extraction.
 
