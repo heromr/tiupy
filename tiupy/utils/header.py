@@ -1,3 +1,5 @@
+from typing import Optional
+
 class Headers:
     def __init__(self, sid: Optional[str] = None):
         self.sid = sid
